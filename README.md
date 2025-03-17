@@ -6,3 +6,5 @@ Steps:
 (1) `python convert_lerobot_to_rlds.py` in a lerobot conda environment 
 
 (2) switch to rlds_dataset envoironment (see https://github.com/moojink/rlds_dataset_builder/tree/main) and run `tfds build --overwrite`
+
+(3) If you want to test if the conversion is successful or not, you can run `python3 visualize_dataset.py <name_of_your_dataset>` from the rlds_dataset_builder repo
