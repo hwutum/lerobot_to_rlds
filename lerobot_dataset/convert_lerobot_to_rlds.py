@@ -2,6 +2,11 @@
 
 """
 Script to convert a LeRobot dataset to RLDS format and save it as a TensorFlow dataset.
+
+Example usage:
+python convert_lerobot_to_rlds.py \
+    --repo-id hangwu/piper_joint_ep_20250422_realsense \
+    --output-dir /home/tars/Datasets/piper_joint_rlds/
 """
 
 import argparse
@@ -15,17 +20,16 @@ from tqdm import tqdm  # Add this import for the progress bar
 import h5py
 # Add the path to the LeRobot library
 # Adjust this path to point to the directory containing the lerobot package
-sys.path.append('/home/ke/Documents/lerobot_serl')  # Update this path to where your lerobot code is located
+sys.path.append('/home/tars/Code/lerobot')  # Update this path to where your lerobot code is located
 
 # Function to load your dataset
-def load_dataset_and_save_to_disk(repo_id, root=None, local_files_only=False, output_dir=None):
+def load_dataset_and_save_to_disk(repo_id, root=None, output_dir=None):
     """
     Load a dataset by repo_id using LeRobotDataset.
     
     Args:
         repo_id: Repository ID of the dataset
         root: Root directory for the dataset stored locally
-        local_files_only: Use local files only
         
     Returns:
         A dataset object in the format expected by DatasetToRLDSConverter
@@ -36,7 +40,7 @@ def load_dataset_and_save_to_disk(repo_id, root=None, local_files_only=False, ou
             from lerobot.common.datasets.lerobot_dataset import LeRobotDataset
             
             # Load the LeRobot dataset
-            lerobot_dataset = LeRobotDataset(repo_id, root=root, local_files_only=local_files_only)
+            lerobot_dataset = LeRobotDataset(repo_id, root=root)
             
             # Create a dataset structure compatible with our converter
             dataset = {
@@ -194,7 +198,7 @@ def load_dataset_and_save_to_disk(repo_id, root=None, local_files_only=False, ou
             
             # Alternative implementation using huggingface datasets
             import datasets
-            hf_dataset = datasets.load_dataset(repo_id, use_auth_token=not local_files_only)
+            hf_dataset = datasets.load_dataset(repo_id)
             
             # Convert HuggingFace dataset to the expected format
             dataset = {
@@ -247,11 +251,6 @@ def main():
         help="Directory to save the RLDS dataset. If not provided, uses the default TFDS data directory.",
     )
     parser.add_argument(
-        "--local-files-only",
-        action="store_true",
-        help="Use local files only. By default, this script will try to fetch the dataset from the hub if it exists.",
-    )
-    parser.add_argument(
         "--root",
         type=str,
         default=None,
@@ -260,7 +259,7 @@ def main():
     
     args = parser.parse_args()
     # Load the dataset
-    dataset = load_dataset_and_save_to_disk(args.repo_id, args.root, args.local_files_only, args.output_dir)
+    dataset = load_dataset_and_save_to_disk(args.repo_id, args.root, args.output_dir)
     
 
 if __name__ == "__main__":
